@@ -943,11 +943,11 @@ def generateReleaseBranchObjects(releaseConfig, branchConfig,
             deliverables_builders.append(
                 builderPrefix('partner_repack', platform))
 
-        if releaseConfig['productName'] != 'fennec':
+        mh_cfg = releaseConfig['partnerRepackConfig']
+        if releaseConfig['productName'] != 'fennec' and mh_cfg.get('config_file', False):
             platform = 'macosx64'
-            mh_cfg = releaseConfig['partnerRepackConfig']
             slaves = branchConfig['platforms'][platform]['slaves']
-            extra_args = mh_cfg.get('extra_args', ['--cfg', mh_cfg['config_file']])
+            extra_args = mh_cfg.get('extra_args', ['--cfg', mh_cfg.get('config_file')])
             extra_args.extend([
                     "--version", releaseConfig["version"],
                     "--build-number", releaseConfig["buildNumber"],
@@ -977,7 +977,7 @@ def generateReleaseBranchObjects(releaseConfig, branchConfig,
                 'properties': {
                     'slavebuilddir': normalizeName(builderPrefix('standalone_partner_repack'), releaseConfig['productName']),
                     'platform': platform,
-                    'branch': 'release-%s' % sourceRepoInfo['name'],
+                'branch': 'release-%s' % sourceRepoInfo['name'],
                 }
             })
 
@@ -2096,7 +2096,7 @@ def generateReleasePromotionBuilders(branch_config, branch_name, product,
                 'product': product,
             }
         })
- 
+
     publish_balrog_mh_cfg = {
         "script_name": "scripts/release/publish_balrog.py",
         "extra_args": [
